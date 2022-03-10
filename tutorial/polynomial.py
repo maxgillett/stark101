@@ -293,7 +293,7 @@ class Polynomial:
 X = Polynomial.X()
 
 
-def calculate_lagrange_polynomials(x_values):
+def calculate_lagrange_polynomials(x_values, disable_pbar=False):
     """
     Given the x_values for evaluating some polynomials, it computes part of the lagrange polynomials
     required to interpolate a polynomial over this domain.
@@ -302,7 +302,7 @@ def calculate_lagrange_polynomials(x_values):
     monomials = [Polynomial.monomial(1, FieldElement.one()) -
                  Polynomial.monomial(0, x) for x in x_values]
     numerator = prod(monomials)
-    for j in tqdm(range(len(x_values))):
+    for j in tqdm(range(len(x_values)), disable=disable_pbar):
         # In the denominator, we have:
         # (x_j-x_0)(x_j-x_1)...(x_j-x_{j-1})(x_j-x_{j+1})...(x_j-x_{len(X)-1})
         denominator = prod([x_values[j] - x for i, x in enumerate(x_values) if i != j])
@@ -326,7 +326,7 @@ def interpolate_poly_lagrange(y_values, lagrange_polynomials):
     return poly
 
 
-def interpolate_poly(x_values, y_values):
+def interpolate_poly(x_values, y_values, disable_pbar=False):
     """
     Returns a polynomial of degree < len(x_values) that evaluates to y_values[i] on x_values[i] for
     all i.
@@ -334,7 +334,7 @@ def interpolate_poly(x_values, y_values):
     assert len(x_values) == len(y_values)
     assert all(isinstance(val, FieldElement) for val in x_values),\
         'Not all x_values are FieldElement'
-    lp = calculate_lagrange_polynomials(x_values)
+    lp = calculate_lagrange_polynomials(x_values, disable_pbar)
     assert all(isinstance(val, FieldElement) for val in y_values),\
         'Not all y_values are FieldElement'
     return interpolate_poly_lagrange(y_values, lp)

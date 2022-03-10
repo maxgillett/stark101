@@ -14,7 +14,7 @@
 # and limitations under the License.                                          #
 ###############################################################################
 
-
+import ast
 import inspect
 from hashlib import sha256
 
@@ -69,3 +69,27 @@ class Channel(object):
         num = self.receive_random_int(0, FieldElement.k_modulus - 1, show_in_proof=False)
         self.proof.append(f'{inspect.stack()[0][3]}:{num}')
         return FieldElement(num)
+    
+    
+# TODO: Implement a single deserialization function
+def decode_str(s):
+    return s[5:]
+
+def decode_int(s):
+    return int(s[5:])
+
+def decode_rand_int(s):
+    return int(s[19:])
+
+def decode_field_elem(s):
+    return FieldElement(int(s[5:]))
+
+def decode_rand_field_elem(s):
+    return FieldElement(int(s[29:]))
+
+def decode_list(s):
+    return ast.literal_eval(s[5:])
+
+def decode_poly(s):
+    print("--" + s)
+    return s[5:].split(",")
